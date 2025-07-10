@@ -20,11 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DestekSistemi.DataAccess\DestekSistemi.DataAccess.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\" />
+    <ProjectReference Include="..\DestekSistemi.Service\DestekSistemi.Service.csproj" />
+    <ProjectReference Include="..\DestekSistemi.ViewModels\DestekSistemi.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

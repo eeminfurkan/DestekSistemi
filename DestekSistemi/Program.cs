@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using DestekSistemi.DataAccess.Context;
+using DestekSistemi.DataAccess.Repositories;
+using DestekSistemi.Service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,8 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false) // Þimdilik email onayý istemiyoruz.
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<ITalepRepository, TalepRepository>();
+builder.Services.AddScoped<ITalepService, TalepService>();
 
 var app = builder.Build();
 

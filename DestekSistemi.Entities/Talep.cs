@@ -25,6 +25,9 @@ namespace DestekSistemi.Entities
         public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
         public Durum Durum { get; set; } = Durum.Acik;
 
+        // YENİ EKLENEN SATIR:
+        [Required]
+        public string KullaniciId { get; set; }
         // TODO: Kullanıcı ile ilişki kurulacak
         // public string KullaniciId { get; set; }
     }
