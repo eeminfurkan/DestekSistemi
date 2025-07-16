@@ -1,8 +1,9 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using DestekSistemi.Data;
 using DestekSistemi.DataAccess.Context;
 using DestekSistemi.DataAccess.Repositories;
 using DestekSistemi.Service.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,13 +15,38 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false) // Þimdilik email onayý istemiyoruz.
+// Program.cs
+
+// Program.cs
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>() // <-- YENÝ EKLENEN KISIM
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ITalepRepository, TalepRepository>();
 builder.Services.AddScoped<ITalepService, TalepService>();
 
 var app = builder.Build();
+
+// YENÝ EKLENEN KISIM:
+// Veritabaný rollerini ve varsayýlan admin'i oluþturmak için seeder'ý çalýþtýr
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        // DataSeeder'daki metodumuzu çaðýrýyoruz.
+        await DataSeeder.SeedRolesAndAdminAsync(services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Veri tohumlama sýrasýnda bir hata oluþtu.");
+    }
+}
+// ------
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

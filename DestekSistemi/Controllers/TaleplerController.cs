@@ -39,5 +39,30 @@ namespace DestekSistemi.Controllers
 
             return View(viewModel);
         }
+
+        // YENİ METOT: GET: /Talepler/Detay/5
+        public async Task<IActionResult> Detay(int id)
+        {
+            var talep = await _talepService.GetTalepByIdAsync(id);
+
+            if (talep == null)
+            {
+                return NotFound();
+            }
+
+            // --- YENİ GÜVENLİK KONTROLÜ ---
+            var mevcutKullaniciId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var kullaniciAdminMi = User.IsInRole("Admin");
+
+            // Eğer kullanıcı Admin değilse VE talebin sahibi de kendisi değilse
+            if (!kullaniciAdminMi && talep.KullaniciId != mevcutKullaniciId)
+            {
+                // Yetkisi yok demektir. Erişim engellendi sayfasına yönlendir.
+                return Forbid();
+            }
+            // --- KONTROL SONU ---
+
+            return View(talep);
+        }
     }
 }

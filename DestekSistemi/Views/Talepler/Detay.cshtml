@@ -1,0 +1,42 @@
+﻿@model DestekSistemi.Entities.Talep
+
+@{
+    ViewData["Title"] = "Talep Detayı";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<div>
+    <h4>@Model.Baslik</h4>
+    <dl class="row">
+        <dt class="col-sm-2">
+            Talep ID
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Id
+        </dd>
+        <dt class="col-sm-2">
+            Açıklama
+        </dt>
+        <dd class="col-sm-10">
+            @* Açıklamayı satır başlarını koruyarak göstermek için *@
+            <pre style="font-family: inherit; font-size: inherit;">@Model.Aciklama</pre>
+        </dd>
+        <dt class="col-sm-2">
+            Durum
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Durum
+        </dd>
+        <dt class="col-sm-2">
+            Oluşturma Tarihi
+        </dt>
+        <dd class="col-sm-10">
+            @Model.OlusturmaTarihi.ToString("dd MMMM yyyy HH:mm")
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Geri Dön</a>
+</div>

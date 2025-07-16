@@ -30,5 +30,26 @@ namespace DestekSistemi.Service.Services
 
             // Örneğin, talep oluşturulunca email gönderme kodu buraya eklenebilir.
         }
+
+        // YENİ METOT:
+        public async Task<List<Talep>> GetTaleplerByRoleAsync(string kullaniciId, bool isAdmin)
+        {
+            if (isAdmin)
+            {
+                // Eğer kullanıcı admin ise, tüm talepleri getir.
+                return await _talepRepository.GetAllAsync();
+            }
+            else
+            {
+                // Değilse, sadece o kullanıcının taleplerini getir.
+                return await _talepRepository.GetAllByUserIdAsync(kullaniciId);
+            }
+        }
+
+        // YENİ METOT:
+        public async Task<Talep> GetTalepByIdAsync(int id)
+        {
+            return await _talepRepository.GetByIdAsync(id);
+        }
     }
 }

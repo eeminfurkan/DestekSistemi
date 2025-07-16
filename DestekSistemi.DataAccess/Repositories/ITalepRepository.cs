@@ -11,6 +11,10 @@ namespace DestekSistemi.DataAccess.Repositories
     public interface ITalepRepository
     {
         Task AddAsync(Talep talep);
+        Task<List<Talep>> GetAllByUserIdAsync(string kullaniciId);
+        Task<List<Talep>> GetAllAsync();
+        Task<Talep> GetByIdAsync(int id);
+
         // Gelecekte eklenecek diğer metotlar:
         // Task<Talep> GetByIdAsync(int id);
         // Task<List<Talep>> GetAllAsync();
