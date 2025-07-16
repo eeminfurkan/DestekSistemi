@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DestekSistemi.Entities\DestekSistemi.Entities.csproj" />
+  </ItemGroup>
+
 </Project>

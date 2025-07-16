@@ -27,5 +27,9 @@ namespace DestekSistemi.DataAccess.Context
 
         // Yorumlar tablosunu da şimdiden ekleyelim.
         // public DbSet<Yorum> Yorumlar { get; set; }
+
+        // YENİ EKLENEN SATIR:
+        public DbSet<Yorum> Yorumlar { get; set; }
+
     }
 }

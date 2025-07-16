@@ -1,4 +1,5 @@
-﻿using DestekSistemi.Service.Services; // Değişti
+﻿using DestekSistemi.Entities.Enums;
+using DestekSistemi.Service.Services; // Değişti
 using DestekSistemi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,29 +41,47 @@ namespace DestekSistemi.Controllers
             return View(viewModel);
         }
 
-        // YENİ METOT: GET: /Talepler/Detay/5
+        // Controllers/TaleplerController.cs
+
+        // GET: /Talepler/Detay/5
         public async Task<IActionResult> Detay(int id)
         {
             var talep = await _talepService.GetTalepByIdAsync(id);
+            if (talep == null) return NotFound();
 
-            if (talep == null)
-            {
-                return NotFound();
-            }
-
-            // --- YENİ GÜVENLİK KONTROLÜ ---
+            // Güvenlik kontrolü... (Aynen kalıyor)
             var mevcutKullaniciId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var kullaniciAdminMi = User.IsInRole("Admin");
+            if (!kullaniciAdminMi && talep.KullaniciId != mevcutKullaniciId) return Forbid();
 
-            // Eğer kullanıcı Admin değilse VE talebin sahibi de kendisi değilse
-            if (!kullaniciAdminMi && talep.KullaniciId != mevcutKullaniciId)
+            // View'e göndereceğimiz ViewModel'i oluşturuyoruz
+            var viewModel = new TalepDetayViewModel
             {
-                // Yetkisi yok demektir. Erişim engellendi sayfasına yönlendir.
-                return Forbid();
-            }
-            // --- KONTROL SONU ---
+                Talep = talep,
+                // --- ÇÖZÜM BURADA ---
+                // ViewModel'in YeniDurum özelliğine, talebin mevcut durumunu atıyoruz.
+                YeniDurum = talep.Durum
+            };
 
-            return View(talep);
+            return View(viewModel);
         }
+
+        // POST: /Talepler/Detay/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        // DEĞİŞİKLİK BURADA: Artık ViewModel yerine sadece ihtiyacımız olan parametreleri alıyoruz.
+        public async Task<IActionResult> Detay(int Id, Durum YeniDurum)
+        {
+            // Bu yöntemle ModelState.IsValid kontrolüne hiç ihtiyacımız kalmıyor,
+            // çünkü gelen parametreler basit tipler (int, enum) ve karmaşık bir model değiller.
+
+            // Servisi kullanarak talep durumunu güncelle
+            await _talepService.UpdateTalepDurumAsync(Id, YeniDurum);
+
+            // İşlem bittikten sonra, aynı detay sayfasına geri yönlendir.
+            return RedirectToAction("Detay", new { id = Id });
+        }
+
     }
 }

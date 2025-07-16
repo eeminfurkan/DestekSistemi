@@ -14,6 +14,9 @@ namespace DestekSistemi.DataAccess.Repositories
         Task<List<Talep>> GetAllByUserIdAsync(string kullaniciId);
         Task<List<Talep>> GetAllAsync();
         Task<Talep> GetByIdAsync(int id);
+        // YENİ METOT:
+        Task UpdateAsync(Talep talep);
+
 
         // Gelecekte eklenecek diğer metotlar:
         // Task<Talep> GetByIdAsync(int id);

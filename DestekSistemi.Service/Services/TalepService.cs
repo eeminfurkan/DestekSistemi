@@ -51,5 +51,19 @@ namespace DestekSistemi.Service.Services
         {
             return await _talepRepository.GetByIdAsync(id);
         }
+
+        // YENİ METOT:
+        public async Task UpdateTalepDurumAsync(int talepId, Entities.Enums.Durum yeniDurum)
+        {
+            var talep = await _talepRepository.GetByIdAsync(talepId);
+            if (talep != null)
+            {
+                talep.Durum = yeniDurum;
+                await _talepRepository.UpdateAsync(talep);
+            }
+            // Eğer talep bulunamazsa, şimdilik bir şey yapmıyoruz.
+            // İstenirse loglama veya hata fırlatma eklenebilir.
+        }
+
     }
 }

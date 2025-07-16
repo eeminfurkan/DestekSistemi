@@ -1,4 +1,5 @@
-﻿@model DestekSistemi.Entities.Talep
+﻿@model DestekSistemi.ViewModels.TalepDetayViewModel
+@using DestekSistemi.Entities.Enums;
 
 @{
     ViewData["Title"] = "Talep Detayı";
@@ -8,35 +9,46 @@
 <hr />
 
 <div>
-    <h4>@Model.Baslik</h4>
+    <h4>@Model.Talep.Baslik</h4>
     <dl class="row">
-        <dt class="col-sm-2">
-            Talep ID
-        </dt>
-        <dd class="col-sm-10">
-            @Model.Id
-        </dd>
-        <dt class="col-sm-2">
-            Açıklama
-        </dt>
-        <dd class="col-sm-10">
-            @* Açıklamayı satır başlarını koruyarak göstermek için *@
-            <pre style="font-family: inherit; font-size: inherit;">@Model.Aciklama</pre>
-        </dd>
-        <dt class="col-sm-2">
-            Durum
-        </dt>
-        <dd class="col-sm-10">
-            @Model.Durum
-        </dd>
-        <dt class="col-sm-2">
-            Oluşturma Tarihi
-        </dt>
-        <dd class="col-sm-10">
-            @Model.OlusturmaTarihi.ToString("dd MMMM yyyy HH:mm")
-        </dd>
+        <dt class="col-sm-2">Açıklama</dt>
+        <dd class="col-sm-10"><pre>@Model.Talep.Aciklama</pre></dd>
+
+        <dt class="col-sm-2">Durum</dt>
+        <dd class="col-sm-10">@Model.Talep.Durum</dd>
+
+        <dt class="col-sm-2">Oluşturma Tarihi</dt>
+        <dd class="col-sm-10">@Model.Talep.OlusturmaTarihi.ToString("dd MMMM yyyy HH:mm")</dd>
     </dl>
 </div>
+
+@* --- YENİ KISIM: Admin için durum güncelleme formu --- *@
+@if (User.IsInRole("Admin"))
+{
+    <hr />
+    <h4>Durumu Güncelle</h4>
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Detay">
+                @* Formun hangi talebe ait olduğunu bilmesi için ID'yi gizli olarak gönderiyoruz *@
+                <input type="hidden" asp-for="Talep.Id" />
+
+                <div class="form-group">
+                    <label asp-for="YeniDurum" class="control-label">Yeni Durum</label>
+                    @* Enum'dan (Durum.cs) bir dropdown listesi oluşturuyoruz *@
+                    <select asp-for="YeniDurum" class="form-control" asp-items="Html.GetEnumSelectList<Durum>()"></select>
+                </div>
+                <br />
+                <div class="form-group">
+                    <input type="submit" value="Güncelle" class="btn btn-success" />
+                </div>
+            </form>
+        </div>
+    </div>
+}
+@* --- YENİ KISIM SONU --- *@
+
+<hr />
 <div>
     <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Geri Dön</a>
 </div>

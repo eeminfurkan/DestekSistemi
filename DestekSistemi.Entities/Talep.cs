@@ -30,5 +30,10 @@ namespace DestekSistemi.Entities
         public string KullaniciId { get; set; }
         // TODO: Kullanıcı ile ilişki kurulacak
         // public string KullaniciId { get; set; }
+            // --- YENİ EKLENEN SATIR ---
+            // Navigation Property: Bu talebe ait tüm yorumların bir listesi.
+        public virtual ICollection<Yorum> Yorumlar { get; set; } = new List<Yorum>();
+        
+
     }
 }

@@ -49,5 +49,13 @@ namespace DestekSistemi.DataAccess.Repositories
             // Eğer bulamazsa null (boş) değer döndürür.
             return await _context.Talepler.FirstOrDefaultAsync(t => t.Id == id);
         }
+
+        // YENİ METOT:
+        public async Task UpdateAsync(Talep talep)
+        {
+            _context.Talepler.Update(talep);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

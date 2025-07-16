@@ -11,6 +11,9 @@ namespace DestekSistemi.Service.Services
 
         Task<List<Talep>> GetTaleplerByRoleAsync(string kullaniciId, bool isAdmin);
         Task<Talep> GetTalepByIdAsync(int id);
+        // YENİ METOT:
+
+        Task UpdateTalepDurumAsync(int talepId, Entities.Enums.Durum yeniDurum);
 
     }
 }
