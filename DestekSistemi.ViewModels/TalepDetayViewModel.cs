@@ -16,5 +16,9 @@ namespace DestekSistemi.ViewModels
 
         // Admin'in formu post ettiğinde seçtiği yeni durum bu property'de tutulacak
         public Durum YeniDurum { get; set; }
+
+        // --- YENİ EKLENEN PROPERTY ---
+        // Yorum ekleme formunun bilgilerini bu property taşıyacak.
+        public YorumEkleViewModel YeniYorum { get; set; }
     }
 }

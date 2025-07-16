@@ -11,10 +11,14 @@ namespace DestekSistemi.Controllers
     public class TaleplerController : Controller
     {
         private readonly ITalepService _talepService; // Değişti
+        private readonly IYorumService _yorumService; // <-- 1. YENİ EKLENEN ALAN
 
-        public TaleplerController(ITalepService talepService) // Değişti
+
+        // 2. CONSTRUCTOR GÜNCELLENDİ
+        public TaleplerController(ITalepService talepService, IYorumService yorumService)
         {
             _talepService = talepService;
+            _yorumService = yorumService; // Gelen servis değişkene atanıyor.
         }
 
         // GET: /Talepler/Olustur
@@ -60,8 +64,10 @@ namespace DestekSistemi.Controllers
                 Talep = talep,
                 // --- ÇÖZÜM BURADA ---
                 // ViewModel'in YeniDurum özelliğine, talebin mevcut durumunu atıyoruz.
-                YeniDurum = talep.Durum
-            };
+                YeniDurum = talep.Durum,
+                YeniYorum = new YorumEkleViewModel { TalepId = id }
+
+            }; 
 
             return View(viewModel);
         }
@@ -82,6 +88,27 @@ namespace DestekSistemi.Controllers
             // İşlem bittikten sonra, aynı detay sayfasına geri yönlendir.
             return RedirectToAction("Detay", new { id = Id });
         }
+
+        // YENİ METOT: Yorum ekleme formu post edildiğinde çalışır.
+        // TaleplerController.cs
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        // DEĞİŞİKLİK BURADA: Parametre adını "viewModel" yerine "YeniYorum" yapıyoruz.
+        public async Task<IActionResult> YorumEkle(YorumEkleViewModel YeniYorum)
+        {
+            // Artık "YeniYorum" parametresinin içi formdan gelen verilerle doğru bir şekilde dolacak.
+            if (ModelState.IsValid)
+            {
+                var kullaniciId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                // Servise de güncellenmiş parametreyi gönderiyoruz.
+                await _yorumService.YorumEkleAsync(YeniYorum, kullaniciId);
+            }
+
+            // Yönlendirme de artık doğru ID'yi kullanacak.
+            return RedirectToAction("Detay", new { id = YeniYorum.TalepId });
+        }
+
 
     }
 }

@@ -1,52 +1,80 @@
 ﻿@model DestekSistemi.ViewModels.TalepDetayViewModel
-@using DestekSistemi.Entities.Enums;
+@using DestekSistemi.Entities.Enums
 
 @{
     ViewData["Title"] = "Talep Detayı";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1>@Model.Talep.Baslik</h1>
 <hr />
 
-<div>
-    <h4>@Model.Talep.Baslik</h4>
-    <dl class="row">
-        <dt class="col-sm-2">Açıklama</dt>
-        <dd class="col-sm-10"><pre>@Model.Talep.Aciklama</pre></dd>
+<div class="row">
+    @* Sol Taraf: Talep Detayları ve Yorum Ekleme Formu *@
+    <div class="col-md-7">
+        <h5>Talep Açıklaması</h5>
+        <div class="card bg-light">
+            <div class="card-body">
+                <pre style="font-family: inherit; font-size: 1rem;">@Model.Talep.Aciklama</pre>
+                <small class="text-muted">Oluşturma Tarihi: @Model.Talep.OlusturmaTarihi.ToString("dd MMMM yyyy HH:mm")</small>
+            </div>
+        </div>
 
-        <dt class="col-sm-2">Durum</dt>
-        <dd class="col-sm-10">@Model.Talep.Durum</dd>
+        <hr />
 
-        <dt class="col-sm-2">Oluşturma Tarihi</dt>
-        <dd class="col-sm-10">@Model.Talep.OlusturmaTarihi.ToString("dd MMMM yyyy HH:mm")</dd>
-    </dl>
-</div>
+        <h5>Yeni Yorum Ekle</h5>
+        <form asp-action="YorumEkle">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-@* --- YENİ KISIM: Admin için durum güncelleme formu --- *@
-@if (User.IsInRole("Admin"))
-{
-    <hr />
-    <h4>Durumu Güncelle</h4>
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="Detay">
-                @* Formun hangi talebe ait olduğunu bilmesi için ID'yi gizli olarak gönderiyoruz *@
-                <input type="hidden" asp-for="Talep.Id" />
+            @* Yorumun hangi talebe ait olduğunu gizli olarak gönderiyoruz *@
+            <input type="hidden" asp-for="YeniYorum.TalepId" />
 
-                <div class="form-group">
-                    <label asp-for="YeniDurum" class="control-label">Yeni Durum</label>
-                    @* Enum'dan (Durum.cs) bir dropdown listesi oluşturuyoruz *@
-                    <select asp-for="YeniDurum" class="form-control" asp-items="Html.GetEnumSelectList<Durum>()"></select>
-                </div>
-                <br />
-                <div class="form-group">
-                    <input type="submit" value="Güncelle" class="btn btn-success" />
+            <div class="form-group mb-3">
+                <textarea asp-for="YeniYorum.Icerik" class="form-control" rows="4" placeholder="Yorumunuzu buraya yazın..."></textarea>
+                <span asp-validation-for="YeniYorum.Icerik" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Yorum Gönder" class="btn btn-info" />
+            </div>
+        </form>
+    </div>
+
+    @* Sağ Taraf: Durum Bilgisi ve Yorum Geçmişi *@
+    <div class="col-md-5">
+        <h5>Talep Durumu</h5>
+        <p>Mevcut Durum: <strong>@Model.Talep.Durum</strong></p>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <form asp-action="Detay" asp-controller="Talepler" method="post">
+                <input type="hidden" name="Id" value="@Model.Talep.Id" />
+                <div class="input-group">
+                    <select name="YeniDurum" class="form-control" asp-items="Html.GetEnumSelectList<Durum>()"></select>
+                    <button type="submit" class="btn btn-success">Güncelle</button>
                 </div>
             </form>
-        </div>
+        }
+
+        <hr />
+
+        <h5>Yorum Geçmişi</h5>
+        @if (Model.Talep.Yorumlar != null && Model.Talep.Yorumlar.Any())
+        {
+            foreach (var yorum in Model.Talep.Yorumlar.OrderBy(y => y.OlusturmaTarihi))
+            {
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <p>@yorum.Icerik</p>
+                        <small class="text-muted">@yorum.OlusturmaTarihi.ToString("g")</small>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">Bu talebe henüz bir yorum eklenmemiş.</p>
+        }
     </div>
-}
-@* --- YENİ KISIM SONU --- *@
+</div>
 
 <hr />
 <div>

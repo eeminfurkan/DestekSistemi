@@ -35,19 +35,19 @@ namespace DestekSistemi.DataAccess.Repositories
         }
 
         // YENİ METOT 2: Tüm talepleri getirir (Admin için).
+        public async Task<Talep> GetByIdAsync(int id)
+        {
+            return await _context.Talepler
+                                 .Include(t => t.Yorumlar) // YORUMLARI DA GETİR
+                                 .FirstOrDefaultAsync(t => t.Id == id);
+        }
+
         public async Task<List<Talep>> GetAllAsync()
         {
             return await _context.Talepler
+                                 .Include(t => t.Yorumlar) // YORUMLARI DA GETİR
                                  .OrderByDescending(t => t.OlusturmaTarihi)
                                  .ToListAsync();
-        }
-
-        // YENİ METOT:
-        public async Task<Talep> GetByIdAsync(int id)
-        {
-            // FirstOrDefaultAsync, belirtilen ID'ye sahip ilk kaydı bulur.
-            // Eğer bulamazsa null (boş) değer döndürür.
-            return await _context.Talepler.FirstOrDefaultAsync(t => t.Id == id);
         }
 
         // YENİ METOT:

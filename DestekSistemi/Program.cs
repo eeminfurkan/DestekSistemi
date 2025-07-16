@@ -27,6 +27,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ITalepRepository, TalepRepository>();
 builder.Services.AddScoped<ITalepService, TalepService>();
 
+// YENÝ EKLENEN SATIRLAR:
+builder.Services.AddScoped<IYorumRepository, YorumRepository>();
+builder.Services.AddScoped<IYorumService, YorumService>();
+
 var app = builder.Build();
 
 // YENÝ EKLENEN KISIM:
