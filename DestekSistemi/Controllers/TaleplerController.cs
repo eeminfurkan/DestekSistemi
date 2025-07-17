@@ -72,42 +72,45 @@ namespace DestekSistemi.Controllers
             return View(viewModel);
         }
 
-        // POST: /Talepler/Detay/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        // DEĞİŞİKLİK BURADA: Artık ViewModel yerine sadece ihtiyacımız olan parametreleri alıyoruz.
-        public async Task<IActionResult> Detay(int Id, Durum YeniDurum)
-        {
-            // Bu yöntemle ModelState.IsValid kontrolüne hiç ihtiyacımız kalmıyor,
-            // çünkü gelen parametreler basit tipler (int, enum) ve karmaşık bir model değiller.
-
-            // Servisi kullanarak talep durumunu güncelle
-            await _talepService.UpdateTalepDurumAsync(Id, YeniDurum);
-
-            // İşlem bittikten sonra, aynı detay sayfasına geri yönlendir.
-            return RedirectToAction("Detay", new { id = Id });
-        }
-
-        // YENİ METOT: Yorum ekleme formu post edildiğinde çalışır.
         // TaleplerController.cs
 
+        // Yorum ekleme metodu
         [HttpPost]
         [ValidateAntiForgeryToken]
-        // DEĞİŞİKLİK BURADA: Parametre adını "viewModel" yerine "YeniYorum" yapıyoruz.
         public async Task<IActionResult> YorumEkle(YorumEkleViewModel YeniYorum)
         {
-            // Artık "YeniYorum" parametresinin içi formdan gelen verilerle doğru bir şekilde dolacak.
             if (ModelState.IsValid)
             {
                 var kullaniciId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                // Servise de güncellenmiş parametreyi gönderiyoruz.
                 await _yorumService.YorumEkleAsync(YeniYorum, kullaniciId);
+
+                // BAŞARI MESAJINI EKLE
+                TempData["SuccessMessage"] = "Yorumunuz başarıyla eklendi.";
+            }
+            else
+            {
+                // HATA MESAJINI EKLE
+                TempData["ErrorMessage"] = "Yorum içeriği boş bırakılamaz.";
             }
 
-            // Yönlendirme de artık doğru ID'yi kullanacak.
             return RedirectToAction("Detay", new { id = YeniYorum.TalepId });
         }
+
+
+        // Durum güncelleme metodu
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Detay(int Id, Durum YeniDurum)
+        {
+            await _talepService.UpdateTalepDurumAsync(Id, YeniDurum);
+
+            // BAŞARI MESAJINI EKLE
+            TempData["SuccessMessage"] = "Talep durumu başarıyla güncellendi.";
+
+            return RedirectToAction("Detay", new { id = Id });
+        }
+
 
 
     }

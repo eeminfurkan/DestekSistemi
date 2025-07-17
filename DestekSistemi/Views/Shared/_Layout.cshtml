@@ -45,9 +45,43 @@
             &copy; 2025 - DestekSistemi - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
+    @* --- YENİ EKLENEN SCRIPT BLOĞU --- *@
+    <script>
+        // Toastr için genel ayarlar
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right"
+        };
+
+        // TempData'dan gelen başarı mesajı var mı diye kontrol et
+        @if (TempData["SuccessMessage"] != null)
+        {
+                <text>
+                    toastr.success("@TempData["SuccessMessage"]");
+                </text>
+        }
+
+        // TempData'dan gelen hata mesajı var mı diye kontrol et
+        @if (TempData["ErrorMessage"] != null)
+        {
+                <text>
+                    toastr.error("@TempData["ErrorMessage"]");
+                </text>
+        }
+    </script>
+    @* --- SCRIPT BLOĞU SONU --- *@
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @* --- YENİ EKLENEN KISIM BAŞLANGICI --- *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    @* --- YENİ EKLENEN KISIM SONU --- *@
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
